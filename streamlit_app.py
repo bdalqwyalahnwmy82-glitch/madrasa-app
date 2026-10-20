@@ -1,32 +1,26 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime
-
-st.set_page_config(page_title="تطبيق المدرسة", layout="wide", page_icon="🏫")
-
-# --- تصميم ---
-st.markdown("""
-<style>
-body { direction: rtl; }
-.stApp { background-color: #f5f7fb; }
-h1, h2, h3 { text-align: center; color: #1e3a8a; }
-</style>
-""", unsafe_allow_html=True)
-
-st.title("🏫 تطبيق المدرسة الذكي")
-st.markdown("### نظام إدارة الطلاب والمعلمين")
-
-# --- القائمة الجانبية ---
+st.set_page_config(page_title="Madrasa App", layout="wide")
+st.title("Madrasa School App")
+st.markdown("### Smart School Management System")
 with st.sidebar:
-    st.header("القائمة")
-        page = st.radio("اختر الصفحة:", ["الرئيسية", "الطلاب", "المعلمين", "الدرجات", "الحضور"])
-
-        if page == "الرئيسية":
-            col1, col2, col3 = st.columns(3)
-                col1.metric("عدد الطلاب", "245", "12+")
-                    col2.metric("عدد المعلمين", "18", "2+")
-                        col3.metric("نسبة الحضور", "92%", "5%")
-                            
-                                st.success("مرحبا بك في نظام المدرسة المطور الجديد! تم تحديث التصميم بنجاح.")
-                                    st.info(f"تاريخ اليوم: {datetime.now().strftime('%Y-%m-%d')}")
-                                        st.balloons
+    st.header("Menu")
+    page = st.radio("Select Page", ["Home", "Students", "Teachers", "Grades"])
+if page == "Home":
+    col1, col2, col3 = st.columns(3)
+    col1.metric("Students", "245")
+    col2.metric("Teachers", "18")
+    col3.metric("Attendance", "92%")
+    st.success("App updated successfully!")
+    st.balloons()
+if page == "Students":
+    st.header("Students Management")
+    df = pd.DataFrame({"Name": ["Ahmed Mohamed", "Salem Ali"], "Class": ["10th", "11th"], "GPA": [95, 88]})
+    st.dataframe(df, use_container_width=True)
+if page == "Teachers":
+    st.header("Teachers")
+    st.write("Teachers list")
+if page == "Grades":
+    st.header("Grades")
+    st.write("Enter grades")
