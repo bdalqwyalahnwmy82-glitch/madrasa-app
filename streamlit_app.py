@@ -1,71 +1,45 @@
 import streamlit as st
-import pandas as pd
-from datetime import datetime
+from PIL import Image
+import sympy as sp
 
-st.set_page_config(page_title="Madrasa App", layout="wide")
-st.title("Madrasa School App")
-st.markdown("### Smart School Management System")
+st.set_page_config(page_title="حل واجب رياضيات", page_icon="✅", layout="centered")
 
-with st.sidebar:
-    st.header("Menu")
-    page = st.radio("Select Page", ["Home", "Students", "Homework Solver", "Grades"])
+st.markdown("## ✅ حل واجب رياضيات")
 
-if page == "Home":
-    col1, col2, col3 = st.columns(3)
-    col1.metric("Students", "245")
-    col2.metric("Teachers", "18")
-    col3.metric("Attendance", "92%")
-    st.success("App updated successfully!")
+uploaded = st.file_uploader("📸 ارفع صورة الواجب", type=["jpg","png","jpeg"])
 
-if page == "Students":
-    st.header("Students Management")
-    df = pd.DataFrame({"Name": ["Ahmed Mohamed", "Salem Ali"], "Class": ["10th", "11th"], "GPA": [95, 88]})
-    st.dataframe(df, use_container_width=True)
-
-if page == "Homework Solver":
-    st.header("📚 حل الواجب وشرحه")
-    st.info("اكتب سؤال الواجب أو ارفع صورة والذكاء الاصطناعي بيحله ويشرحه لك")
-    
-    subject = st.selectbox("اختر المادة", ["رياضيات", "علوم", "انجليزي", "عربي", "فيزياء", "كيمياء"])
-    
-    question_text = st.text_area("اكتب سؤال الواجب هنا:", placeholder="مثال: حل المعادلة 2x + 5 = 15")
-    
-    uploaded_file = st.file_uploader("أو ارفع صورة الواجب", type=["jpg", "png", "jpeg", "pdf"])
-    
-    if uploaded_file:
-        st.image(uploaded_file, caption="صورة الواجب", width=300)
-    
-    if st.button("حل الواجب واشرحه ✨", type="primary"):
-        if question_text or uploaded_file:
-            st.divider()
-            st.subheader(f"✅ حل واجب {subject}")
-            
-            with st.container():
-                st.markdown("#### 1. فهم السؤال:")
-                st.write(f"السؤال المطلوب: {question_text if question_text else 'من الصورة المرفوعة'}")
-                st.write(f"المادة: {subject}")
-                
-                st.markdown("#### 2. خطوات الحل:")
-                if subject == "رياضيات":
-                    st.write("• الخطوة 1: نحدد المعطيات والمطلوب")
-                    st.write("• الخطوة 2: نطبق القانون المناسب")
-                    st.write("• الخطوة 3: نحسب النتيجة خطوة بخطوة")
-                else:
-                    st.write("• الخطوة 1: نقرأ السؤال بعناية")
-                    st.write("• الخطوة 2: نستخرج المعلومات المهمة")
-                    st.write("• الخطوة 3: نرتب الأفكار للإجابة")
-                
-                st.markdown("#### 3. الحل الكامل:")
-                st.success(f"هنا سيظهر الحل التفصيلي لسؤال: {question_text[:100] if question_text else 'الواجب'}")
-                
-                st.markdown("#### 4. الشرح المبسط:")
-                st.write("الشرح بطريقة سهلة للطالب عشان يفهم ليش حلينا بهذه الطريقة...")
-                
-                st.markdown("#### 5. الإجابة النهائية:")
-                st.info("الإجابة النهائية مع التأكيد")
+def احل_المعادلة(نص):
+    try:
+        x = sp.symbols('x')
+        clean = نص.replace('س','x').replace('×','*').replace('÷','/').lower()
+        if '=' in clean:
+            left, right = clean.split('=')
+            eq = sp.Eq(sp.sympify(left), sp.sympify(right))
+            sol = sp.solve(eq, x)
         else:
-            st.warning("اكتب السؤال أو ارفع صورة أولاً!")
+            sol = sp.solve(sp.sympify(clean), x)
+        return sol
+    except:
+        return None
 
-if page == "Grades":
-    st.header("Grades")
-    st.write("Enter grades")
+سؤال = st.text_input("اكتب المسألة هنا:", value="x+5=15")
+
+if سؤال:
+    حل = احل_المعادلة(سؤال)
+    if حل is not None:
+        st.markdown("### 1. فهم السؤال:")
+        st.write(f"السؤال: حل المعادلة {سؤال}")
+        st.markdown("### 2. خطوات الحل:")
+        st.write("• نحدد المطلوب\n• ننقل الرقم\n• نحسب")
+        st.markdown("### 3. الحل الكامل:")
+        st.success(f"x = {حل[0] if حل else حل}")
+        st.markdown("### 4. الشرح المبسط:")
+        st.write(f"يا بطل، {سؤال} نخلي x لحالها ونطير الرقم للجهة الثانية")
+        st.markdown("### 5. الإجابة النهائية:")
+        st.markdown(f"<div style='background:#1e4620;padding:15px;border-radius:10px;color:#8ef08e;font-size:20px'>✅ x = {حل[0] if حل else حل}</div>", unsafe_allow_html=True)
+
+if uploaded:
+    st.image(Image.open(uploaded), caption="صورة الواجب")
+
+st.divider()
+st.caption("قابل للتثبيت | صنع في زبيد لطلاب السعودية")
